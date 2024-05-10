@@ -34,7 +34,7 @@
  {
     public:
     T500():
-    _serial(PA_11, PA_12){
+    _serial(PC_10, PC_11){
         _serial.set_baud(115200);
         
     }
