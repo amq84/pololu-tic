@@ -29,16 +29,23 @@
  #pragma once
  #include "mbed.h"
  #include "../interface/ITicComChannel.hpp"
+#include <cstdint>
 
  class TicSerial: public ITicComChannel
  {
 
     public:
     TicSerial(){}
-    ~TicSerial(){}
+    TicSerial(PinName tx, PinName rx);
+    ~TicSerial();
     void commandQuick(TicCommand cmd);
     void commandW32(TicCommand cmd, uint32_t val);
     void commandW7(TicCommand cmd, uint8_t val);
-    void getSegment(TicCommand cmd, uint8_t offset, uint8_t length, void * buffer);
+    int getSegment(TicCommand cmd, uint8_t offset, uint8_t length, void * buffer);
+
     private:
+    BufferedSerial *_serial;
+
+    uint8_t MSBs(uint32_t byte);
+    void writeW7(uint8_t byte);
  };

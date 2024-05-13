@@ -32,8 +32,9 @@
 
  class ITicComChannel
  {
+    public:
     virtual void commandQuick(TicCommand cmd)=0;
     virtual void commandW32(TicCommand cmd, uint32_t val)=0;
     virtual void commandW7(TicCommand cmd, uint8_t val)=0;
-    virtual void getSegment(TicCommand cmd, uint8_t offset, uint8_t length, void * buffer)=0;
+    virtual int getSegment(TicCommand cmd, uint8_t offset, uint8_t length, void * buffer)=0;
  };

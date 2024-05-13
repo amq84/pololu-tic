@@ -28,13 +28,19 @@
  */
  #pragma once
  #include "TicDeviceBase.hpp"
+ #include "../TicComChannel/includes/TicSerial.hpp"
+ 
  #include "mbed.h"
 
  class TicT500: public TicDeviceBase
  {
      public:
-     TicT500(){}
-     ~TicT500(){}
+     TicT500();
+     ~TicT500();
+     void setAgcMode(TicAgcMode mode){}
+     void setAgcBottomCurrentLimit(TicAgcBottomCurrentLimit limit){}
+     void setAgcCurrentBoostSteps(TicAgcCurrentBoostSteps steps){}
+     void setAgcFrequencyLimit(TicAgcFrequencyLimit limit){}
      private:
 
  };

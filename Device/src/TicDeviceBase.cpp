@@ -26,41 +26,128 @@
  *
  * @note Contact maintainer for modifications: info@soft-loop.com
  */
- #pragma once
  #include "../includes/TicDeviceBase.hpp"
+#include <cstdint>
 
-void TicDeviceBase::setTargetPosition(int32_t position){}
-void TicDeviceBase::setTargetVelocity(int32_t velocity){}
-void TicDeviceBase::haltAndSetPosition(int32_t position){}
-void TicDeviceBase::haltAndHold(){}
-void TicDeviceBase::goHomeReverse(){}
-void TicDeviceBase::goHomeForward(){}
-void TicDeviceBase::resetCommandTimeout(){}
-void TicDeviceBase::deenergize(){}
-void TicDeviceBase::energize(){}
-void TicDeviceBase::exitSafeStart(){}
-void TicDeviceBase::enterSafeStart(){}
-void TicDeviceBase::reset(){};
-void TicDeviceBase::clearDriverError(){}
-void TicDeviceBase::setMaxSpeed(uint32_t speed){}
-void TicDeviceBase::setStartingSpeed(uint32_t speed){}
-void TicDeviceBase::setMaxAccel(uint32_t accel){}
-void TicDeviceBase::setMaxDecel(uint32_t decel){}
-void TicDeviceBase::setStepMode(TicStepMode mode){}
-void TicDeviceBase::setCurrentLimit(uint16_t limit){}
-void TicDeviceBase::setDecayMode(TicDecayMode mode){}
-void TicDeviceBase::setAgcMode(TicAgcMode mode){}
-void TicDeviceBase::setAgcBottomCurrentLimit(TicAgcBottomCurrentLimit limit){}
-void TicDeviceBase::setAgcCurrentBoostSteps(TicAgcCurrentBoostSteps steps){}
-void TicDeviceBase::setAgcFrequencyLimit(TicAgcFrequencyLimit limit){}
-TicOperationState TicDeviceBase::getOperationState(){return TicOperationState::Reset;}
-bool TicDeviceBase::getEnergized(){}
-bool TicDeviceBase::getPositionUncertain(){}
-bool TicDeviceBase::getForwardLimitActive(){}
-bool TicDeviceBase::getReverseLimitActive(){}
-bool TicDeviceBase::getHomingActive(){}
-uint16_t TicDeviceBase::getErrorStatus(){}
-uint32_t TicDeviceBase::getErrorsOccurred(){}
+void TicDeviceBase::setTargetPosition(int32_t position){
+    _channel->commandW32(TicCommand::SetTargetPosition, position);
+}
+
+void TicDeviceBase::setTargetVelocity(int32_t velocity){
+    _channel->commandW32(TicCommand::SetTargetVelocity, velocity);
+}
+
+void TicDeviceBase::haltAndSetPosition(int32_t position){
+    _channel->commandW32(TicCommand::HaltAndSetPosition, position);
+}
+
+void TicDeviceBase::haltAndHold(){
+    _channel->commandQuick(TicCommand::HaltAndHold);
+}
+
+void TicDeviceBase::goHomeReverse(){
+    _channel->commandW7(TicCommand::GoHome, 0);
+}
+
+void TicDeviceBase::goHomeForward(){
+    _channel->commandW7(TicCommand::GoHome, 1);
+}
+
+void TicDeviceBase::resetCommandTimeout(){
+    _channel->commandQuick(TicCommand::ResetCommandTimeout);
+}
+
+void TicDeviceBase::deenergize(){
+    _channel->commandQuick(TicCommand::Deenergize);
+}
+
+void TicDeviceBase::energize(){
+    _channel->commandQuick(TicCommand::Energize);
+}
+
+void TicDeviceBase::exitSafeStart(){
+    _channel->commandQuick(TicCommand::ExitSafeStart);
+}
+
+void TicDeviceBase::enterSafeStart(){
+    _channel->commandQuick(TicCommand::EnterSafeStart);
+}
+
+void TicDeviceBase::reset(){
+    _channel->commandQuick(TicCommand::ResetCommandTimeout);
+    ThisThread::sleep_for(10ms);
+}
+
+void TicDeviceBase::clearDriverError(){
+    _channel->commandQuick(TicCommand::ClearDriverError);
+}
+
+void TicDeviceBase::setMaxSpeed(uint32_t speed){
+    _channel->commandW32(TicCommand::SetSpeedMax, speed);
+}
+
+void TicDeviceBase::setStartingSpeed(uint32_t speed){
+    _channel->commandW32(TicCommand::SetStartingSpeed, speed);
+}
+
+void TicDeviceBase::setMaxAccel(uint32_t accel){
+    _channel->commandW32(TicCommand::SetAccelMax, accel);
+}
+
+void TicDeviceBase::setMaxDecel(uint32_t decel){
+    _channel->commandW32(TicCommand::SetDecelMax, decel);
+}
+
+void TicDeviceBase::setStepMode(TicStepMode mode){
+    _channel->commandW7(TicCommand::SetStepMode, (uint8_t) mode);
+}
+
+void TicDeviceBase::setCurrentLimit(uint16_t limit){
+
+}
+
+void TicDeviceBase::setDecayMode(TicDecayMode mode){
+    _channel->commandW7(TicCommand::SetDecayMode, (uint8_t)mode);
+}
+
+//void TicDeviceBase::setAgcBottomCurrentLimit(TicAgcBottomCurrentLimit limit){}
+//void TicDeviceBase::setAgcCurrentBoostSteps(TicAgcCurrentBoostSteps steps){}
+//void TicDeviceBase::setAgcFrequencyLimit(TicAgcFrequencyLimit limit){}
+TicOperationState TicDeviceBase::getOperationState(){
+
+    return (TicOperationState)getVar8(VarOffset::OperationState);
+}
+
+bool TicDeviceBase::getEnergized(){
+    return getVar8(VarOffset::MiscFlags1) >> (uint8_t)TicMiscFlags1::Energized & 1;
+}
+
+bool TicDeviceBase::getPositionUncertain(){
+    return getVar8(VarOffset::MiscFlags1) >> (uint8_t)TicMiscFlags1::PositionUncertain & 1;
+}
+
+bool TicDeviceBase::getForwardLimitActive(){
+    return getVar8(VarOffset::MiscFlags1) >> (uint8_t)TicMiscFlags1::ForwardLimitActive & 1;
+}
+
+bool TicDeviceBase::getReverseLimitActive(){
+    return getVar8(VarOffset::MiscFlags1) >> (uint8_t)TicMiscFlags1::ReverseLimitActive & 1;
+}
+
+bool TicDeviceBase::getHomingActive(){
+    return getVar8(VarOffset::MiscFlags1) >> (uint8_t)TicMiscFlags1::HomingActive & 1;
+}
+
+uint16_t TicDeviceBase::getErrorStatus(){
+    return getVar16(VarOffset::ErrorStatus);
+}
+
+uint32_t TicDeviceBase::getErrorsOccurred(){
+    uint32_t result;
+    _channel->getSegment(TicCommand::GetVariableAndClearErrorsOccurred, VarOffset::ErrorsOccurred, 4, &result);
+    return result;
+}
+
 TicPlanningMode TicDeviceBase::getPlanningMode(){return TicPlanningMode::Off;}
 int32_t TicDeviceBase::getTargetPosition(){return 0;}
 int32_t TicDeviceBase::getTargetVelocity(){return 0;}
@@ -95,3 +182,24 @@ TicAgcFrequencyLimit TicDeviceBase::getAgcFrequencyLimit(){return TicAgcFrequenc
 uint8_t TicDeviceBase::getLastHpDriverErrors(){return 0;}
 void TicDeviceBase::getSetting(uint8_t offset, uint8_t length, uint8_t * buffer){}
 uint8_t TicDeviceBase::getLastError(){return 0;}
+
+uint8_t TicDeviceBase::getVar8(uint8_t offset){
+    uint8_t result;
+    _channel->getSegment(TicCommand::GetVariable, offset, 1, &result);
+    return result;
+}
+
+uint16_t TicDeviceBase::getVar16(uint8_t offset){
+    uint8_t buffer[2];
+    _channel->getSegment(TicCommand::GetVariable, offset, 2, &buffer);
+    return ((uint16_t)buffer[0] << 0) | ((uint16_t)buffer[1] << 8);
+}
+
+uint32_t TicDeviceBase::getVar32(uint8_t offset){
+    uint8_t buffer[4];
+    _channel->getSegment(TicCommand::GetVariable, offset, 4, buffer);
+    return ((uint32_t)buffer[0] << 0) |
+      ((uint32_t)buffer[1] << 8) |
+      ((uint32_t)buffer[2] << 16) |
+      ((uint32_t)buffer[3] << 24);
+}

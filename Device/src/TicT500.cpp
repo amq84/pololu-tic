@@ -29,4 +29,12 @@
 
  #include "../includes/TicT500.hpp"
 
- 
+TicT500::TicT500()
+{
+    _channel = new TicSerial(PC_10, PC_11);
+}
+
+TicT500::~TicT500()
+{
+    
+}

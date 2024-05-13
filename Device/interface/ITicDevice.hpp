@@ -44,7 +44,7 @@
         virtual void energize()=0;
         virtual void exitSafeStart()=0;
         virtual void enterSafeStart()=0;
-        virtual void reset();
+        virtual void reset()=0;
         virtual void clearDriverError()=0;
         virtual void setMaxSpeed(uint32_t speed)=0;
         virtual void setStartingSpeed(uint32_t speed)=0;

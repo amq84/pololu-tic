@@ -28,16 +28,68 @@
  */
  #pragma once
  #include "../includes/TicSerial.hpp"
+#include <cstdint>
+
+TicSerial::TicSerial(PinName tx, PinName rx)
+{
+    _serial = new BufferedSerial(tx,rx);
+}
+TicSerial::~TicSerial()
+{
+
+}
 
 void TicSerial::commandQuick(TicCommand cmd){
-
+    char _byte[1];
+    _byte[0] = (char)cmd;
+    _serial->write(_byte, 1);
 }
+
 void TicSerial::commandW32(TicCommand cmd, uint32_t val){
-
+    commandQuick(cmd);
+    writeW7(MSBs(val));
+    writeW7(val >> 0);
+    writeW7(val >> 8);
+    writeW7(val >> 16);
+    writeW7(val >> 24);
 }
+
 void TicSerial::commandW7(TicCommand cmd, uint8_t val){
-
+    commandQuick(cmd);
+    writeW7(val);
 }
-void TicSerial::getSegment(TicCommand cmd, uint8_t offset, uint8_t length, void * buffer){
 
+int TicSerial::getSegment(TicCommand cmd, uint8_t offset, uint8_t length, void * buffer){
+    length &= 0x3F;
+    commandQuick(cmd);
+    writeW7(offset& 0x7F);
+    writeW7(length | (offset >> 1 & 0x40));
+    // Flush before read
+    _serial->sync();
+    uint8_t byteCount = _serial->read((uint8_t *)buffer, length);
+    if (byteCount > length || byteCount < 0)
+    {
+        memset(buffer,0,length);
+        return -2;
+    }else if (byteCount == length)
+    {
+        return 0;
+    }else
+    {
+        return -1;
+    }
+}
+
+uint8_t TicSerial::MSBs(uint32_t byte)
+{
+    return ((byte >>  7) & 1) |
+           ((byte >> 14) & 2) |
+           ((byte >> 21) & 4) |
+           ((byte >> 28) & 8);
+}
+
+void TicSerial::writeW7(uint8_t byte)
+{
+    byte = byte & 0x7F;
+    _serial->write(&byte, 1);
 }
