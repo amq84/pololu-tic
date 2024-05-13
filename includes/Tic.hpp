@@ -28,18 +28,4 @@
  */
  #pragma once
  #include "mbed.h"
-
- namespace TIC {
- class T500 
- {
-    public:
-    T500():
-    _serial(PC_10, PC_11){
-        _serial.set_baud(115200);
-        
-    }
-    ~T500(){}
-    private:
-    BufferedSerial _serial;
- };
- } 
+ #include "Device/includes/TicT500.hpp"
