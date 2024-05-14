@@ -148,30 +148,93 @@ uint32_t TicDeviceBase::getErrorsOccurred(){
     return result;
 }
 
-TicPlanningMode TicDeviceBase::getPlanningMode(){return TicPlanningMode::Off;}
-int32_t TicDeviceBase::getTargetPosition(){return 0;}
-int32_t TicDeviceBase::getTargetVelocity(){return 0;}
-uint32_t TicDeviceBase::getMaxSpeed(){return 0;}
-uint32_t TicDeviceBase::getStartingSpeed(){return 0;}
-uint32_t TicDeviceBase::getMaxAccel(){return 0;}
-uint32_t TicDeviceBase::getMaxDecel(){return 0;}
-int32_t TicDeviceBase::getCurrentPosition(){return 0;}
-int32_t TicDeviceBase::getCurrentVelocity(){return 0;}
-uint32_t TicDeviceBase::getActingTargetPosition(){return 0;}
-uint32_t TicDeviceBase::getTimeSinceLastStep(){return 0;}
-TicReset TicDeviceBase::getDeviceReset(){return TicReset::ResetLine;}
-uint16_t TicDeviceBase::getVinVoltage(){return 0;}
-uint32_t TicDeviceBase::getUpTime(){return 0;}
-int32_t TicDeviceBase::getEncoderPosition(){return 0;}
-uint16_t TicDeviceBase::getRCPulseWidth(){return 0;}
-uint16_t TicDeviceBase::getAnalogReading(TicPin pin){return 0;}
-bool TicDeviceBase::getDigitalReading(TicPin pin){return true;}
-TicPinState TicDeviceBase::getPinState(TicPin pin){return TicPinState::HighImpedance;}
-TicStepMode TicDeviceBase::getStepMode(){return TicStepMode::Microstep1;}
-uint16_t TicDeviceBase::getCurrentLimit(){return 0;}
-TicDecayMode TicDeviceBase::getDecayMode(){return TicDecayMode::Fast;}
-TicInputState TicDeviceBase::getInputState(){return TicInputState::Halt;}
-uint16_t TicDeviceBase::getInputAfterAveraging(){return 0;}
+TicPlanningMode TicDeviceBase::getPlanningMode(){
+    return (TicPlanningMode)getVar8(VarOffset::PlanningMode);
+}
+
+int32_t TicDeviceBase::getTargetPosition(){
+    return getVar32(VarOffset::TargetPosition);
+}
+
+int32_t TicDeviceBase::getTargetVelocity(){
+    return getVar32(VarOffset::TargetVelocity);
+}
+
+uint32_t TicDeviceBase::getMaxSpeed(){
+    return getVar32(VarOffset::SpeedMax);
+}
+
+uint32_t TicDeviceBase::getStartingSpeed(){
+    return getVar32(VarOffset::StartingSpeed);
+}
+
+uint32_t TicDeviceBase::getMaxAccel(){
+    return getVar32(VarOffset::AccelMax);
+}
+
+uint32_t TicDeviceBase::getMaxDecel(){
+    return getVar32(VarOffset::DecelMax);
+}
+
+int32_t TicDeviceBase::getCurrentPosition(){
+    return getVar32(VarOffset::CurrentPosition);
+}
+
+int32_t TicDeviceBase::getCurrentVelocity(){
+    return getVar32(VarOffset::CurrentVelocity);
+}
+
+TicReset TicDeviceBase::getDeviceReset(){
+    return (TicReset)getVar8(VarOffset::DeviceReset);
+}
+
+uint16_t TicDeviceBase::getVinVoltage(){
+    return getVar16(VarOffset::VinVoltage);
+}
+
+uint32_t TicDeviceBase::getUpTime(){
+    return getVar32(VarOffset::UpTime);
+}
+
+int32_t TicDeviceBase::getEncoderPosition(){
+    return getVar32(VarOffset::EncoderPosition);
+}
+
+uint16_t TicDeviceBase::getRCPulseWidth(){
+    return getVar16(VarOffset::RCPulseWidth);
+}
+
+uint16_t TicDeviceBase::getAnalogReading(TicPin pin){
+    uint8_t offset = VarOffset::AnalogReadingSCL + 2 * (uint8_t)pin;
+    return getVar16(offset);
+}
+
+bool TicDeviceBase::getDigitalReading(TicPin pin){
+    uint8_t readings = getVar8(VarOffset::DigitalReadings);
+    return (readings >> (uint8_t)pin) & 1;
+}
+
+TicPinState TicDeviceBase::getPinState(TicPin pin){
+    uint8_t states = getVar8(VarOffset::PinStates);
+    return (TicPinState)(states >> (2 * (uint8_t)pin) & 0b11);
+}
+
+TicStepMode TicDeviceBase::getStepMode(){
+    return (TicStepMode)getVar8(VarOffset::StepMode);
+}
+
+TicDecayMode TicDeviceBase::getDecayMode(){
+    return (TicDecayMode)getVar8(VarOffset::DecayMode);
+}
+
+TicInputState TicDeviceBase::getInputState(){
+    return (TicInputState)getVar8(VarOffset::InputState);
+}
+
+uint16_t TicDeviceBase::getInputAfterAveraging(){
+    
+}
+
 uint16_t TicDeviceBase::getInputAfterHysteresis(){return 0;}
 int32_t TicDeviceBase::getInputAfterScaling(){return 0;}
 TicMotorDriverError TicDeviceBase::getLastMotorDriverError(){return TicMotorDriverError::None;}

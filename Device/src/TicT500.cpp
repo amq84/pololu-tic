@@ -28,6 +28,7 @@
  */
 
  #include "../includes/TicT500.hpp"
+#include <cstdint>
 
 TicT500::TicT500()
 {
@@ -37,4 +38,11 @@ TicT500::TicT500()
 TicT500::~TicT500()
 {
     
+}
+
+uint16_t TicT500::getCurrentLimit()
+{
+    uint8_t code = getVar8(VarOffset::CurrentLimit);
+    if (code > 32) { code = 32; }
+    return Tic03aCurrentTable[code];
 }

@@ -103,8 +103,6 @@
         //void setAgcMode(TicAgcMode mode);
         protected:
         ITicComChannel *_channel;
-
-        private:
         enum VarOffset
         {
             OperationState        = 0x00, // uint8_t

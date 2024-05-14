@@ -41,6 +41,42 @@
      void setAgcBottomCurrentLimit(TicAgcBottomCurrentLimit limit){}
      void setAgcCurrentBoostSteps(TicAgcCurrentBoostSteps steps){}
      void setAgcFrequencyLimit(TicAgcFrequencyLimit limit){}
+     uint16_t getCurrentLimit();
      private:
-
+        uint16_t Tic03aCurrentTable[33] =
+        {
+            0,
+            1,
+            174,
+            343,
+            495,
+            634,
+            762,
+            880,
+            990,
+            1092,
+            1189,
+            1281,
+            1368,
+            1452,
+            1532,
+            1611,
+            1687,
+            1762,
+            1835,
+            1909,
+            1982,
+            2056,
+            2131,
+            2207,
+            2285,
+            2366,
+            2451,
+            2540,
+            2634,
+            2734,
+            2843,
+            2962,
+            3093,
+        };
  };
